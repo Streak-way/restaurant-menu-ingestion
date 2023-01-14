@@ -5,21 +5,22 @@ import supabase from "./supabase";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { loginAtom } from "./recoil/loginAtom";
 
 const Login = () => {
   const [_, setLogin] = useRecoilState(loginAtom);
-  const isLogin = useRecoilValue(loginAtom);
-  console.log("isLogin", isLogin);
   const navigate = useNavigate();
   // supabase on auth state change
   supabase.auth.onAuthStateChange((event, session) => {
     console.log("event", event, "session", session);
     //   get user data
     if (event === "SIGNED_IN") {
-      navigate("/intake");
-      toast("You have been signed in!");
+      // get user data
+      const userMetadata = session.user.user_metadata;
+      const { avatar_url, email, full_name } = userMetadata;
+      navigate("/search");
+      toast("Login Successful!");
       setLogin(true);
       console.log("signed in");
     } else {

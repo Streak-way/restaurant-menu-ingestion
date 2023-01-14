@@ -9,54 +9,79 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, Container } from "@mui/system";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import supabase from "./supabase";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import { useEffect, useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme();
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  // eslint-disable-next-line no-console
-  console.log({
-    restName: data.get("restName"),
-    streetAddress: data.get("streetAddress"),
-    city: data.get("city"),
-    zipcode: data.get("zipcode"),
-    state: data.get("state"),
-    country: data.get("country"),
-  });
-  const userId = supabase.auth.user().id;
-  const restObj = {
-    name: data.get("restName"),
-    street: data.get("streetAddress"),
-    city: data.get("city"),
-    zipcode: data.get("zipcode"),
-    state: data.get("state"),
-    country: data.get("country"),
-    created_by: userId,
-    last_modified_by: userId,
-    lat: data.get("lat"),
-    long: data.get("long"),
-  };
-  // make a post request to supabase
-  try {
-    toast("Saving your restaurant...");
-    const { data, error } = await supabase
-      .from("restaurants")
-      .insert([restObj]);
-    if (error) throw error;
-    console.log(data);
-    toast.success("Restaurant saved successfully!");
-  } catch (error) {
-    console.log(error);
-  }
-};
 const RestaurantIntake = () => {
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
+
+  useEffect(() => {
+    const getLocation = async () => {
+      const { coords } = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      return coords;
+    };
+    getLocation().then((coords) => {
+      console.log("coords in useffect", coords);
+      setLatitude(coords.latitude);
+      setLongitude(coords.longitude);
+    });
+  });
+
+  const handleSubmit = async (event) => {
+    // get current user location
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    // eslint-disable-next-line no-console
+    console.log({
+      restName: data.get("restName"),
+      streetAddress: data.get("streetAddress"),
+      city: data.get("city"),
+      zipcode: data.get("zipcode"),
+      state: data.get("state"),
+      country: data.get("country"),
+    });
+    const userId = supabase.auth.user;
+    console.log("userId", userId, latitude, longitude);
+    const restObj = {
+      name: data.get("restName"),
+      street: data.get("streetAddress"),
+      city: data.get("city"),
+      zipcode: data.get("zipcode"),
+      state: data.get("state"),
+      country: data.get("country"),
+      created_by: userId,
+      last_modified_by: userId,
+      lat: latitude,
+      long: longitude,
+    };
+    console.log("restObj", restObj);
+    // make a post request to supabase
+    try {
+      toast("Saving your restaurant...");
+      const { data, error } = await supabase
+        .from("restaurants")
+        .insert([restObj]);
+      if (error) throw error;
+      console.log(data);
+      toast.success("Restaurant saved successfully!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <ToastContainer />
         <Box
           sx={{
             marginTop: 8,
@@ -66,6 +91,7 @@ const RestaurantIntake = () => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <RestaurantMenuIcon />
             {/* <HowToRegIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -73,7 +99,7 @@ const RestaurantIntake = () => {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
                   autoComplete="rest-name"
                   name="restName"
@@ -84,7 +110,7 @@ const RestaurantIntake = () => {
                   autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
@@ -144,6 +170,13 @@ const RestaurantIntake = () => {
               Submit
             </Button>
           </Box>
+          {/* TODO google map integration */}
+          {/* <div style={{ height: "100vh", width: "100%" }}> */}
+          {/* <GoogleMapReact
+            // center={{ lat: 59, lng: 10 }}
+            // zoom={zoom}
+            ></GoogleMapReact> */}
+          {/* </div> */}
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
