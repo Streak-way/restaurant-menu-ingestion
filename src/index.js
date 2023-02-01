@@ -5,8 +5,11 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
+import app from "./firebase";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const firebaseApp = app;
+console.log("firebaseApp", firebaseApp);
 root.render(
   <React.StrictMode>
     <RecoilRoot>

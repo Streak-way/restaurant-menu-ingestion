@@ -2,34 +2,39 @@
 import { GoogleLoginButton } from "react-social-login-buttons";
 import { loginWithProvider } from "./auth";
 import supabase from "./supabase";
+import app from "./firebase";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRecoilState } from "recoil";
-import { loginAtom } from "./recoil/loginAtom";
+import { loginAtom } from "./store/loginAtom";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const [_, setLogin] = useRecoilState(loginAtom);
   const navigate = useNavigate();
-  // supabase on auth state change
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log("event", event, "session", session);
-    //   get user data
-    if (event === "SIGNED_IN") {
-      // get user data
-      const userMetadata = session.user.user_metadata;
-      const { avatar_url, email, full_name } = userMetadata;
+  const provider = new GoogleAuthProvider();
+  provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
+  provider.setCustomParameters({
+    prompt: "select_account",
+  });
+  const auth = getAuth();
+  const handleLogin = () => {
+    signInWithPopup(auth, provider).then((result) => {
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const user = result.user;
+      // TODO: add user profile to top right corner.
+      console.log("user", user);
+      console.log("token", token);
       navigate("/search");
       toast("Login Successful!");
       setLogin(true);
-      console.log("signed in");
-    } else {
-      console.log("not signed in");
-    }
-  });
+    });
+  };
   return (
     <div>
-      <GoogleLoginButton onClick={() => loginWithProvider("google")} />
+      <GoogleLoginButton onClick={handleLogin} />
       <ToastContainer />
     </div>
   );

@@ -8,6 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SearchRes = ({ results }) => {
   console.log("results", results);
@@ -15,6 +17,7 @@ const SearchRes = ({ results }) => {
     const address = `${result.street} ${result.city} ${result.state} ${result.zipcode} ${result.country}`;
     return (
       <>
+        <ToastContainer />
         <Box pt={2}></Box>
         <Card sx={{ maxWidth: "30em", width: "30em" }}>
           <CardActionArea>

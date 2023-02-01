@@ -1,16 +1,16 @@
-import { Box, Grid, TextField } from "@mui/material";
+import { Box, Grid, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
+import LogoutBtn from "./logoutBtn";
 import OnBoardRest from "./onboardRest";
-import { searchResAtom } from "./recoil/restaurantAtom";
+import { searchResAtom } from "./store/restaurantAtom";
 import SearchRes from "./searchRes";
 import supabase from "./supabase";
 
 const RestSearch = () => {
   const navigate = useNavigate();
 
-  const [setSearchRes] = useRecoilState(searchResAtom);
-  const searchResults = useRecoilValue(searchResAtom);
+  const [searchRes, setSearchRes] = useRecoilState(searchResAtom);
   const handleOnChange = async (e) => {
     const searchTerm = e.target.value;
     // call supabase to search for restaurants
@@ -24,12 +24,20 @@ const RestSearch = () => {
     <>
       <div style={{ width: "70em", marginTop: "1em" }}>
         <div style={{ display: "inline" }}>
-          <img
+          {/* put streak way logo */}
+          <Typography
+            variant="h4"
+            component="div"
+            style={{ fontFamily: "cursive", display: "inline", padding: "1em" }}
+          >
+            Streak Way
+          </Typography>
+          {/* <img
             src="streak-way-logo.png"
             className="App-logo"
             alt="logo"
             onClick={() => navigate("/")}
-          />
+          /> */}
         </div>
         <div style={{ display: "inline" }}>
           <TextField
@@ -50,12 +58,19 @@ const RestSearch = () => {
         >
           <OnBoardRest />
         </div>
+        <div
+          style={{
+            display: "inline",
+            paddingLeft: "1em",
+            verticalAlign: "top",
+          }}
+        >
+          <LogoutBtn />
+        </div>
       </div>
 
       <Box pt={2} marginTop={10}>
-        {searchResults && searchResults.length > 0 && (
-          <SearchRes results={searchResults} />
-        )}
+        {searchRes && searchRes.length > 0 && <SearchRes results={searchRes} />}
       </Box>
     </>
   );

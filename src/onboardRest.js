@@ -33,7 +33,7 @@ const OnBoardRest = () => {
           <DialogContentText>
             Please enter the restaurant information
           </DialogContentText>
-          <RestaurantIntake />
+          <RestaurantIntake setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     </>

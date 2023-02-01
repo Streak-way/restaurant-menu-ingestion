@@ -9,15 +9,21 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, Container } from "@mui/system";
-import { toast, ToastContainer } from "react-toastify";
-import supabase from "./supabase";
+import { toast } from "react-toastify";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { useEffect, useState } from "react";
-import "react-toastify/dist/ReactToastify.css";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
+import firebase from "./firebase";
+import { getAuth } from "firebase/auth";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 const theme = createTheme();
 
-const RestaurantIntake = () => {
+const RestaurantIntake = ({ setOpen }) => {
+  const db = getFirestore(firebase);
+  const auth = getAuth(firebase);
+  const storage = getStorage(firebase);
+
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
 
@@ -48,8 +54,10 @@ const RestaurantIntake = () => {
       state: data.get("state"),
       country: data.get("country"),
     });
-    const userId = supabase.auth.user;
-    console.log("userId", userId, latitude, longitude);
+    // get current user
+    console.log("firebase", firebase);
+    const user = auth.currentUser;
+    const userId = user.uid;
     const restObj = {
       name: data.get("restName"),
       street: data.get("streetAddress"),
@@ -62,16 +70,19 @@ const RestaurantIntake = () => {
       lat: latitude,
       long: longitude,
     };
-    console.log("restObj", restObj);
+    const file = data.get("image");
     // make a post request to supabase
     try {
-      toast("Saving your restaurant...");
-      const { data, error } = await supabase
-        .from("restaurants")
-        .insert([restObj]);
-      if (error) throw error;
-      console.log(data);
+      // save image to firebase storage
+      const storageRef = ref(storage, `images/${file.name}`);
+      const res = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(res.ref);
+      restObj.image = url;
+      // save restaurant to firestore
+      const docRef = await addDoc(collection(db, "restaurants"), restObj);
+
       toast.success("Restaurant saved successfully!");
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -81,7 +92,6 @@ const RestaurantIntake = () => {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <ToastContainer />
         <Box
           sx={{
             marginTop: 8,
@@ -95,7 +105,7 @@ const RestaurantIntake = () => {
             {/* <HowToRegIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5">
-            Recruiter Sign up
+            Restaurant on Boarding
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -158,6 +168,17 @@ const RestaurantIntake = () => {
                   label="country"
                   name="country"
                   autoComplete="country"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                {/* file upload button */}
+                <input
+                  type="file"
+                  name="image"
+                  onChange={(e) => {
+                    // get upload file
+                    const file = e.target.files[0];
+                  }}
                 />
               </Grid>
             </Grid>

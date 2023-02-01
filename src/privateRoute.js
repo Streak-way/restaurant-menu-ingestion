@@ -7,7 +7,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { loginAtom } from "./recoil/loginAtom";
+import { loginAtom } from "./store/loginAtom";
 
 const PrivateRoute = ({ children }) => {
   const isLogin = useRecoilValue(loginAtom);

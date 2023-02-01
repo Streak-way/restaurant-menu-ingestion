@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import supabase from "./supabase";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { loginAtom } from "./recoil/loginAtom";
+import { loginAtom } from "./store/loginAtom";
 
 const LogoutBtn = () => {
   const isLogin = useRecoilValue(loginAtom);
@@ -17,7 +17,7 @@ const LogoutBtn = () => {
       color="primary"
       onClick={handleLogout}
       variant="contained"
-      style={{ position: "fixed", right: "7em", top: "2em" }}
+      //   style={{ position: "fixed", right: "7em", top: "2em" }}
     >
       Logout
     </Button>
