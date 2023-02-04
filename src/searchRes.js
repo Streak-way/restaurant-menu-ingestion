@@ -8,11 +8,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { toast, ToastContainer } from "react-toastify";
+import { useState } from "react";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SearchRes = ({ results }) => {
   console.log("results", results);
+  const [open, setOpen] = useState(false);
   return results.map((result) => {
     const address = `${result.street} ${result.city} ${result.state} ${result.zipcode} ${result.country}`;
     return (
@@ -24,7 +26,7 @@ const SearchRes = ({ results }) => {
             <CardMedia
               component="img"
               height="140"
-              image=""
+              image={result.image}
               alt="Hotel image"
             />
             <CardContent>
@@ -37,7 +39,13 @@ const SearchRes = ({ results }) => {
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <Button size="small" color="primary">
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
               Menu items
             </Button>
           </CardActions>

@@ -1,24 +1,40 @@
-import { Box, Grid, TextField, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Box, TextField, Typography } from "@mui/material";
+import { useRecoilState } from "recoil";
 import LogoutBtn from "./logoutBtn";
 import OnBoardRest from "./onboardRest";
 import { searchResAtom } from "./store/restaurantAtom";
 import SearchRes from "./searchRes";
-import supabase from "./supabase";
+import {
+  getFirestore,
+  collection,
+  where,
+  query,
+  getDocs,
+} from "firebase/firestore";
+import firebase from "./firebase";
 
 const RestSearch = () => {
-  const navigate = useNavigate();
-
   const [searchRes, setSearchRes] = useRecoilState(searchResAtom);
+  const db = getFirestore(firebase);
+  const restRef = collection(db, "restaurants");
+
   const handleOnChange = async (e) => {
+    const restaurants = [];
     const searchTerm = e.target.value;
-    // call supabase to search for restaurants
-    const res = await supabase
-      .from("restaurants")
-      .select("*")
-      .like("name", `%${searchTerm}%`);
-    setSearchRes(res.data);
+    // const restaurants = await query(
+    //   restRef,
+    //   where("name", "array-contains", searchTerm)
+    // );
+    // name contains searchTerm
+    const q = await query(restRef, where("name", "==", searchTerm));
+    const querySnapshot = await getDocs(q);
+    console.log("querySnapshot", querySnapshot);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      restaurants.push(doc.data());
+    });
+    setSearchRes(restaurants);
   };
   return (
     <>

@@ -4,13 +4,10 @@ import { Route, Routes } from "react-router-dom";
 import Login from "./login";
 import RestaurantIntake from "./RestaurantIntake";
 import PrivateRoute from "./privateRoute";
-import LogoutBtn from "./logoutBtn";
 import RestSearch from "./Search";
-import firebase from "firebase/app";
 
 function App() {
   console.log("app");
-  // https://supabase.com/docs/guides/auth/auth-google
   return (
     <div className="App">
       {/* logo */}

@@ -1,11 +1,5 @@
-import React, { useContext } from "react";
-import {
-  Route,
-  redirect,
-  useLocation,
-  Navigate,
-  Outlet,
-} from "react-router-dom";
+import React from "react";
+import { Navigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { loginAtom } from "./store/loginAtom";
 

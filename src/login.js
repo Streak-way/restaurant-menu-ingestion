@@ -1,8 +1,5 @@
 // react function component
 import { GoogleLoginButton } from "react-social-login-buttons";
-import { loginWithProvider } from "./auth";
-import supabase from "./supabase";
-import app from "./firebase";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,7 +8,7 @@ import { loginAtom } from "./store/loginAtom";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
-  const [_, setLogin] = useRecoilState(loginAtom);
+  const [login, setLogin] = useRecoilState(loginAtom);
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
@@ -27,6 +24,7 @@ const Login = () => {
       // TODO: add user profile to top right corner.
       console.log("user", user);
       console.log("token", token);
+      console.log("login", login);
       navigate("/search");
       toast("Login Successful!");
       setLogin(true);

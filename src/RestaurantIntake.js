@@ -71,7 +71,6 @@ const RestaurantIntake = ({ setOpen }) => {
       long: longitude,
     };
     const file = data.get("image");
-    // make a post request to supabase
     try {
       // save image to firebase storage
       const storageRef = ref(storage, `images/${file.name}`);
@@ -79,8 +78,7 @@ const RestaurantIntake = ({ setOpen }) => {
       const url = await getDownloadURL(res.ref);
       restObj.image = url;
       // save restaurant to firestore
-      const docRef = await addDoc(collection(db, "restaurants"), restObj);
-
+      await addDoc(collection(db, "restaurants"), restObj);
       toast.success("Restaurant saved successfully!");
       setOpen(false);
     } catch (error) {
@@ -172,14 +170,7 @@ const RestaurantIntake = ({ setOpen }) => {
               </Grid>
               <Grid item xs={12}>
                 {/* file upload button */}
-                <input
-                  type="file"
-                  name="image"
-                  onChange={(e) => {
-                    // get upload file
-                    const file = e.target.files[0];
-                  }}
-                />
+                <input type="file" name="image" />
               </Grid>
             </Grid>
             <Button

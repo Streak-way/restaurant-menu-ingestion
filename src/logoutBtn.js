@@ -1,24 +1,21 @@
 import { Button } from "@mui/material";
-import supabase from "./supabase";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { loginAtom } from "./store/loginAtom";
+import firebase from "./firebase";
+import { getAuth } from "firebase/auth";
 
 const LogoutBtn = () => {
   const isLogin = useRecoilValue(loginAtom);
   const [_, setLogin] = useRecoilState(loginAtom);
   const handleLogout = async () => {
-    // supabase logout
-    await supabase.auth.signOut();
+    if (!isLogin) return;
+    // logout from firebase
+    await getAuth(firebase).signOut();
     setLogin(false);
   };
   if (!isLogin) return null;
   return (
-    <Button
-      color="primary"
-      onClick={handleLogout}
-      variant="contained"
-      //   style={{ position: "fixed", right: "7em", top: "2em" }}
-    >
+    <Button color="primary" onClick={handleLogout} variant="contained">
       Logout
     </Button>
   );
