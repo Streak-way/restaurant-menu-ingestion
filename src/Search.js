@@ -32,7 +32,7 @@ const RestSearch = () => {
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       console.log(doc.id, " => ", doc.data());
-      restaurants.push(doc.data());
+      restaurants.push({ ...doc.data(), id: doc.id });
     });
     setSearchRes(restaurants);
   };
