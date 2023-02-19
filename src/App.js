@@ -2,7 +2,6 @@ import "./App.css";
 // react dom router
 import { Route, Routes } from "react-router-dom";
 import Login from "./login";
-import RestaurantIntake from "./RestaurantIntake";
 import PrivateRoute from "./privateRoute";
 import RestSearch from "./Search";
 
@@ -23,14 +22,6 @@ function App() {
             element={
               <PrivateRoute>
                 <RestSearch />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/intake"
-            element={
-              <PrivateRoute>
-                <RestaurantIntake />
               </PrivateRoute>
             }
           />

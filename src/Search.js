@@ -9,11 +9,14 @@ import {
   collection,
   where,
   query,
+  orderBy,
   getDocs,
+  startAt,
 } from "firebase/firestore";
 import firebase from "./firebase";
 
 const RestSearch = () => {
+  console.log("rest search rendering");
   const [searchRes, setSearchRes] = useRecoilState(searchResAtom);
   const db = getFirestore(firebase);
   const restRef = collection(db, "restaurants");
@@ -21,19 +24,26 @@ const RestSearch = () => {
   const handleOnChange = async (e) => {
     const restaurants = [];
     const searchTerm = e.target.value;
-    // const restaurants = await query(
-    //   restRef,
-    //   where("name", "array-contains", searchTerm)
-    // );
-    // name contains searchTerm
-    const q = await query(restRef, where("name", "==", searchTerm));
+    if (searchTerm.length === 0) {
+      setSearchRes([]);
+      return;
+    }
+
+    console.log("searchTerm", searchTerm);
+    // firebase db query name contains searchTerm
+    const q = await query(
+      restRef,
+      where("name", ">=", searchTerm),
+      where("name", "<=", searchTerm + "\uf8ff"),
+      orderBy("name", "asc")
+    );
     const querySnapshot = await getDocs(q);
     console.log("querySnapshot", querySnapshot);
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       console.log(doc.id, " => ", doc.data());
       restaurants.push({ ...doc.data(), id: doc.id });
     });
+    console.log("restaurants", restaurants);
     setSearchRes(restaurants);
   };
   return (

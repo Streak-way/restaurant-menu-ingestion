@@ -6,5 +6,5 @@ const { persistAtom } = recoilPersist();
 export const searchResAtom = atom({
   key: "searchResults",
   default: [],
-  effects_UNSTABLE: [persistAtom],
+  // effects_UNSTABLE: [persistAtom],
 });

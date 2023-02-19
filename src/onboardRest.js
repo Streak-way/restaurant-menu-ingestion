@@ -6,17 +6,21 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { useState } from "react";
+import { useRecoilState } from "recoil";
 import RestaurantIntake from "./RestaurantIntake";
+import { restOnboardDialog } from "./store/restOnboard";
 const OnBoardRest = () => {
   // dialog open
-  const [open, setOpen] = useState(false);
+  // recoil state for dialog open
+  console.log("on board page");
+  const [open, setOpen] = useRecoilState(restOnboardDialog);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+  console.log("on board page");
   return (
     <>
       <Button
@@ -33,7 +37,7 @@ const OnBoardRest = () => {
           <DialogContentText>
             Please enter the restaurant information
           </DialogContentText>
-          <RestaurantIntake setOpen={setOpen} />
+          {open && <RestaurantIntake setOpen={setOpen} />}
         </DialogContent>
       </Dialog>
     </>
